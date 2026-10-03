@@ -69,30 +69,42 @@ class TestBooksCollector:
             f"ожидание {expected_result}, результат {result}"
         )  
 
-    def test_favorites_operations(self):
+    def test_add_to_favorites_success(self):
         collector = BooksCollector()
         book_name = "Гарри Поттер"
-       
         collector.add_new_book(book_name)
-        collector.add_book_in_favorites(book_name)       
+        collector.add_book_in_favorites(book_name)
         assert book_name in collector.get_list_of_favorites_books()
 
+    def test_add_to_favorites_ignores_duplicate(self):
+        collector = BooksCollector()
+        book_name = "Гарри Поттер"
+        collector.add_new_book(book_name)
+        collector.add_book_in_favorites(book_name)
         collector.add_book_in_favorites(book_name)
         assert len(collector.get_list_of_favorites_books()) == 1
 
+    def test_remove_from_favorites(self):
+        collector = BooksCollector()
+        book_name = "Гарри Поттер"
+        collector.add_new_book(book_name)
+        collector.add_book_in_favorites(book_name)
         collector.delete_book_from_favorites(book_name)
         assert book_name not in collector.get_list_of_favorites_books()
-        assert len(collector.get_list_of_favorites_books()) == 0  
 
-    def test_get_books_for_children_filtering(self):
-        collector = BooksCollector()       
+    def test_children_books_includes_allowed_genre(self):
+        collector = BooksCollector()
         collector.add_new_book("Добрая сказка")
         collector.set_book_genre("Добрая сказка", "Мультфильмы")
+        children_books = collector.get_books_for_children()
+        assert "Добрая сказка" in children_books
+
+    def test_children_books_excludes_restricted_genre(self):
+        collector = BooksCollector()
         collector.add_new_book("Страшный триллер")
         collector.set_book_genre("Страшный триллер", "Ужасы")
         children_books = collector.get_books_for_children()
-        assert "Добрая сказка" in children_books, "Детская книга"
-        assert "Страшный триллер" not in children_books, "Книга для взрослых" 
+        assert "Страшный триллер" not in children_books 
 
     def test_get_books_with_specific_genre(self):
         collector = BooksCollector()
