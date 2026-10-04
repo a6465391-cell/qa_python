@@ -142,8 +142,7 @@ class TestBooksCollector:
         collector.set_book_genre("Другая книга", "Детективы")
 
         result = collector.get_books_with_specific_genre("Фантастика")
-        assert "Фэнтези 1" in result, "Книга 'Фэнтези 1' должна быть в списке"
-        assert "Фэнтези 2" in result, "Книга 'Фэнтези 2' должна быть в списке"
+        assert result == ["Фэнтези 1", "Фэнтези 2"]
 
     def test_get_books_with_specific_genre_excludes_other_genres(self):
        
@@ -168,8 +167,7 @@ class TestBooksCollector:
 
         result = collector.get_books_genre()
         
-        assert "Книга А" in result, "Ключ 'Книга А' должен быть в словаре"
-        assert "Книга Б" in result, "Ключ 'Книга Б' должен быть в словаре"
+        assert list(result.keys()) == ["Книга А", "Книга Б"]
 
     def test_get_books_genre_returns_correct_values(self):
         
@@ -181,8 +179,7 @@ class TestBooksCollector:
 
         result = collector.get_books_genre()
         
-        assert result.get("Книга А") == "Комедии", "Жанр книги А должен быть 'Комедии'"
-        assert result.get("Книга Б") == "Мультфильмы", "Жанр книги Б должен быть 'Мультфильмы'"
+        assert result == {"Книга А": "Комедии", "Книга Б": "Мультфильмы"}
 
     def test_get_books_genre_returns_correct_length(self):
       
