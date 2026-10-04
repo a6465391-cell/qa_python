@@ -24,17 +24,29 @@ class TestBooksCollector:
     # напиши свои тесты ниже
     # чтобы тесты были независимыми в каждом из них создавай отдельный экземпляр класса BooksCollector()
 
-    def test_set_book_genre(self):
+    def test_add_new_book_sets_empty_genre(self):
+   
         collector = BooksCollector()
         book_name = "Гарри Поттер"
-        valid_genre = "Фантастика"  
-        collector.add_new_book(book_name)
-        
-        assert collector.get_book_genre(book_name) == ""
 
-        collector.set_book_genre(book_name, valid_genre)
+        collector.add_new_book(book_name)
+    
+   
         result = collector.get_book_genre(book_name)
-        assert result == valid_genre, f"Ожидание '{valid_genre}', результат '{result}'"
+        assert result == "", f"Ожидание и результат: '{result}'"
+
+    def test_set_book_genre_successfully_updates_genre(self):
+   
+        collector = BooksCollector()
+        book_name = "Гарри Поттер"
+        valid_genre = "Фантастика"
+    
+        collector.add_new_book(book_name)
+    
+        collector.set_book_genre(book_name, valid_genre)
+    
+        result = collector.get_book_genre(book_name)
+        assert result == valid_genre, f"Ожидание '{valid_genre}', результат: '{result}'"
 
     @pytest.mark.parametrize(
         "book_name, genre_to_set, expected_result",
@@ -106,7 +118,8 @@ class TestBooksCollector:
         children_books = collector.get_books_for_children()
         assert "Страшный триллер" not in children_books 
 
-    def test_get_books_with_specific_genre(self):
+    def test_get_books_with_specific_genre_returns_correct_count(self):
+        
         collector = BooksCollector()
         collector.add_new_book("Фэнтези 1")
         collector.set_book_genre("Фэнтези 1", "Фантастика")
@@ -116,12 +129,37 @@ class TestBooksCollector:
         collector.set_book_genre("Другая книга", "Детективы")
 
         result = collector.get_books_with_specific_genre("Фантастика")
-        assert len(result) == 2
-        assert "Фэнтези 1" in result
-        assert "Фэнтези 2" in result
-        assert "Другая книга" not in result
+        assert len(result) == 2, f"Ожидание и результат: {len(result)}"
 
-    def test_get_books_genre_returns_full_dict(self):
+    def test_get_books_with_specific_genre_includes_target_books(self):
+        
+        collector = BooksCollector()
+        collector.add_new_book("Фэнтези 1")
+        collector.set_book_genre("Фэнтези 1", "Фантастика")
+        collector.add_new_book("Фэнтези 2")
+        collector.set_book_genre("Фэнтези 2", "Фантастика")
+        collector.add_new_book("Другая книга")
+        collector.set_book_genre("Другая книга", "Детективы")
+
+        result = collector.get_books_with_specific_genre("Фантастика")
+        assert "Фэнтези 1" in result, "Книга 'Фэнтези 1' должна быть в списке"
+        assert "Фэнтези 2" in result, "Книга 'Фэнтези 2' должна быть в списке"
+
+    def test_get_books_with_specific_genre_excludes_other_genres(self):
+       
+        collector = BooksCollector()
+        collector.add_new_book("Фэнтези 1")
+        collector.set_book_genre("Фэнтези 1", "Фантастика")
+        collector.add_new_book("Фэнтези 2")
+        collector.set_book_genre("Фэнтези 2", "Фантастика")
+        collector.add_new_book("Другая книга")
+        collector.set_book_genre("Другая книга", "Детективы")
+
+        result = collector.get_books_with_specific_genre("Фантастика")
+        assert "Другая книга" not in result, "Книга 'Другая книга' не должна быть в списке фантастики" 
+
+    def test_get_books_genre_returns_correct_keys(self):
+        
         collector = BooksCollector()
         collector.add_new_book("Книга А")
         collector.set_book_genre("Книга А", "Комедии")        
@@ -129,8 +167,33 @@ class TestBooksCollector:
         collector.set_book_genre("Книга Б", "Мультфильмы")
 
         result = collector.get_books_genre()
-        assert result.get("Книга А") == "Комедии"
-        assert result.get("Книга Б") == "Мультфильмы"
-        assert len(result) == 2
+        
+        assert "Книга А" in result, "Ключ 'Книга А' должен быть в словаре"
+        assert "Книга Б" in result, "Ключ 'Книга Б' должен быть в словаре"
+
+    def test_get_books_genre_returns_correct_values(self):
+        
+        collector = BooksCollector()
+        collector.add_new_book("Книга А")
+        collector.set_book_genre("Книга А", "Комедии")        
+        collector.add_new_book("Книга Б")
+        collector.set_book_genre("Книга Б", "Мультфильмы")
+
+        result = collector.get_books_genre()
+        
+        assert result.get("Книга А") == "Комедии", "Жанр книги А должен быть 'Комедии'"
+        assert result.get("Книга Б") == "Мультфильмы", "Жанр книги Б должен быть 'Мультфильмы'"
+
+    def test_get_books_genre_returns_correct_length(self):
+      
+        collector = BooksCollector()
+        collector.add_new_book("Книга А")
+        collector.set_book_genre("Книга А", "Комедии")        
+        collector.add_new_book("Книга Б")
+        collector.set_book_genre("Книга Б", "Мультфильмы")
+
+        result = collector.get_books_genre()
+        
+        assert len(result) == 2, f"Ожидание и результат: {len(result)}"
 
     
